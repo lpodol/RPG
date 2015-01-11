@@ -16,14 +16,22 @@ name = gets.chomp.upcase
 puts "So glad you're here, #{name}. Our village has been plagued by a series of terrible beasts, and we desperately need you to gain mastery over the hordes. Will you fight this snake? Y/N?"
 answer = gets.chomp.upcase
 
-def flight(healthH,aliveH)
-  health-=2
-  puts "You ran away. You are a horrendous coward and no true beastmaster. We spit on your name and curse your descendents."
-  if health == 0
+def flight(healthH,aliveH,aliveB,healthB)
+  initial_health = healthH
+  healthH-=2
+  puts "You ran away. Your health count has dropped from #{initial_health} to #{healthH}. You are a horrendous coward and no true beastmaster. We spit on your name and curse your descendents."
+  if healthH == 0
     aliveH = false
     puts "The villagers have murdered you for your cowardice. Tales of your shame reach your home and loved ones. You are unmourned."
+  else
+    puts "Are you sure? We heard you were the bravest of the land. Y/N"
+    query = gets.chomp.upcase
+    if query == "N"
+      flight(healthH,aliveH,aliveB,healthB)
+    elsif query == "Y"
+      fight(healthH,aliveH,aliveB,healthB)
+    end
   end
-  return healthH
 end
 
 
@@ -41,8 +49,11 @@ def fight(healthH,aliveH,aliveB,healthB)
         hero_turn = false
       elsif damage_chance > 20
         healthB-=damage_baddie
-        puts "You got a hit! The beast's health has dropped to #{healthB}."
-        if healthB <= 0
+        puts "You got a hit!"
+        if healthB > 0
+          puts "The beast's health has dropped to #{healthB}."
+        elsif healthB <= 0
+          puts "The beast is dead!"
           aliveB = false
         else
           hero_turn = false
@@ -67,25 +78,20 @@ def fight(healthH,aliveH,aliveB,healthB)
   if aliveH == false
     puts "You are so dead."
   else
+    puts "You have lived to fight another day! Will you fight for us again? Y/N"
     healthH = initial_health + 1
-    puts "You have lived to fight another day. You've received one health point. Your total health is #{healthH}."
-    puts "Will you fight for us again? Y/N"
+    puts healthH
     aliveB = true
     healthB = healthH # you can reset baddie health to 10 or increment lealevels
     query = gets.chomp.upcase
     healthH = fight_or_flight?(query,healthH,aliveH,aliveB,healthB)
-    # return healthH
-    # generate random number that selects a baddy from array and return baddy#{key:name}
-    # puts "a new beast has emerged! #{key:name} wants to eat you alive, will you fight? Y/N?"
-    # query = gets.chomp.upcase
-    # #run fight or flight?
   end
 end
 
 
 def fight_or_flight?(answer, healthH, aliveH, aliveB,healthB)
   if answer == "N"
-    flight(healthH,aliveH)
+    flight(healthH,aliveH,aliveB,healthB)
   elsif answer == "Y"
     puts "BATTLE ROUND!"
     puts "You make the first move."
@@ -95,5 +101,5 @@ end
 
 hero_health = fight_or_flight?(answer,hero_health,hero_alive,baddie_alive,baddie_health)
 # action begins
-puts "Your health count is #{hero_health}."
+puts "You have #{hero_health} health points."
 # defs
